@@ -146,3 +146,84 @@ func reflectSetValueMain() {
 	fmt.Println("c:", c)
 	fmt.Println("d:", d)
 }
+
+type Student struct {
+	Name  string `json:"name"`
+	Age   int    `json:"age"`
+	Score int    `json:"score"`
+}
+
+func (s Student) GetInfo() string {
+	return fmt.Sprintf("Name: %s, Age: %d, Score: %d", s.Name, s.Age, s.Score)
+}
+
+func (s *Student) SetInfo(name string, age int, score int) {
+	s.Name = name
+	s.Age = age
+	s.Score = score
+}
+
+func (s Student) PrintInfo() {
+	fmt.Println("这是一个学生信息打印方法")
+}
+
+func printStructField(s interface{}) {
+	t := reflect.TypeOf(s)
+	// Check if it's a struct or a pointer to struct
+	if t.Kind() != reflect.Struct && t.Elem().Kind() != reflect.Struct {
+		fmt.Println("Expected a struct type")
+		return
+	}
+	field0 := t.Field(0)
+	fmt.Printf("Field Name: %s, Field Type: %s, Tag: %s ,TagJsonName:%s \n", field0.Name, field0.Type, field0.Tag,
+		field0.Tag.Get("json"))
+	fmt.Println(field0)
+	fmt.Printf("%#v\n", field0)
+
+	field1, ok := t.FieldByName("Age")
+	if ok {
+		fmt.Printf("Field1 Name: %s, Field1 Type: %s, Tag1: %s \n", field1.Name, field1.Type, field1.Tag)
+	}
+
+	fmt.Println("----遍历结构体的所有字段----")
+
+	var fieldCount = t.NumField()
+	fmt.Printf("Total number of fields: %d\n", fieldCount)
+
+	for i := 0; i < fieldCount; i++ {
+		field := t.Field(i)
+		fmt.Printf("Field %d: Name: %s, Type: %s, Tag: %s \n", i, field.Name, field.Type, field.Tag)
+	}
+	fmt.Println("遍历获取结构体字段值")
+	v := reflect.ValueOf(s)
+	for i := 0; i < fieldCount; i++ {
+		fieldValue := v.Field(i)
+		fmt.Printf("Field %d: Value: %v \n", i, fieldValue.Interface())
+	}
+
+}
+
+func printStructMethod(s interface{}) {
+	t := reflect.TypeOf(s)
+	// Check if it's a struct or a pointer to struct
+	if t.Kind() != reflect.Struct && t.Elem().Kind() != reflect.Struct {
+		fmt.Println("Expected a struct type")
+		return
+	}
+	fmt.Println("----遍历结构体的方法----")
+	methodCount := t.NumMethod()
+	fmt.Printf("Total number of methods: %d\n", methodCount)
+	for i := 0; i < methodCount; i++ {
+		method := t.Method(i)
+		fmt.Printf("Method %d: Name: %s, Type: %s \n", i, method.Name, method.Type)
+	}
+
+	v := reflect.ValueOf(s)
+	v.Method(1).Call(nil)
+}
+
+func reflectStructMain() {
+	student := Student{Name: "Bob", Age: 20, Score: 90}
+	//printStructField(student)
+	printStructMethod(student)
+}

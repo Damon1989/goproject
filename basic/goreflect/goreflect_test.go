@@ -13,3 +13,7 @@ func TestReflectValueMain(t *testing.T) {
 func TestReflectSetValueMain(t *testing.T) {
 	reflectSetValueMain()
 }
+
+func TestReflectStructMain(t *testing.T) {
+	reflectStructMain()
+}
