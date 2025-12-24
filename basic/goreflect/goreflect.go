@@ -109,6 +109,7 @@ func reflectValueMain() {
 
 func reflectSetValue(x interface{}) {
 	v := reflect.ValueOf(x)
+	fmt.Println(v.Kind())
 	if v.Kind() == reflect.Ptr && !v.Elem().CanSet() {
 		fmt.Println("Cannot set value")
 		return
