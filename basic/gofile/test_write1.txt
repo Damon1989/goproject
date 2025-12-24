@@ -1,0 +1,2 @@
+Hello, Go Buffered Writing!
+This is another test file.

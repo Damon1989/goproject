@@ -1,0 +1,4 @@
+Hello, Go File Writing!
+This is a test file.Hello, Go File Writing!
+This is a test file.Hello, Go File Writing!
+This is a test file.
