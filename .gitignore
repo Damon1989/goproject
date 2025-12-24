@@ -1,0 +1,32 @@
+# 依赖目录
+node_modules/
+vendor/
+__pycache__/
+
+# 构建产物
+dist/
+build/
+*.exe
+*.dll
+*.so
+
+# 配置文件（排除示例文件）
+*.env
+!*.env.example
+
+# 日志文件
+*.log
+logs/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# 临时文件
+*.tmp
+temp/

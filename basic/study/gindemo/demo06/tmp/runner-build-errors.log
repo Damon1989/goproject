@@ -1,0 +1,5 @@
+# demo02/routers
+routers\apiRouters.go:26:6: main redeclared in this block
+	routers\adminRouters.go:25:6: other declaration of main
+routers\defaultRouters.go:20:6: main redeclared in this block
+	routers\adminRouters.go:25:6: other declaration of main
