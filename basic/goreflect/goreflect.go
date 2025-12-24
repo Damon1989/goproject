@@ -220,10 +220,38 @@ func printStructMethod(s interface{}) {
 
 	v := reflect.ValueOf(s)
 	v.Method(1).Call(nil)
+	fmt.Println(v.Method(0).Call(nil))
+
+	v.MethodByName("SetInfo").Call([]reflect.Value{reflect.ValueOf("Charlie"), reflect.ValueOf(22), reflect.ValueOf(95)})
+	fmt.Println(v.MethodByName("GetInfo").Call(nil))
+}
+
+func reflectChangeStructField(s interface{}) {
+	t := reflect.TypeOf(s)
+	if t.Kind() != reflect.Ptr || t.Elem().Kind() != reflect.Struct {
+		fmt.Println("Expected a pointer to struct type")
+		return
+	}
+	v := reflect.ValueOf(s).Elem()
+	field := v.FieldByName("Name")
+	if field.IsValid() && field.CanSet() && field.Kind() == reflect.String {
+		field.SetString("David")
+	}
+	ageField := v.FieldByName("Age")
+	if ageField.IsValid() && ageField.CanSet() && ageField.Kind() == reflect.Int {
+		ageField.SetInt(25)
+	}
+	scoreField := v.FieldByName("Score")
+	if scoreField.IsValid() && scoreField.CanSet() && scoreField.Kind() == reflect.Int {
+		scoreField.SetInt(88)
+	}
+	fmt.Printf("Modified struct: %+v\n", s)
+
 }
 
 func reflectStructMain() {
 	student := Student{Name: "Bob", Age: 20, Score: 90}
 	//printStructField(student)
-	printStructMethod(student)
+	//printStructMethod(&student)
+	reflectChangeStructField(&student)
 }
