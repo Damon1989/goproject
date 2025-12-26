@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"io"
 	"net/http"
 	"os"
@@ -60,5 +61,44 @@ func main() {
 	router.GET("/albums", getAlbums)
 	router.POST("/albums", postAlbums)
 	router.GET("/albums/:id", getAlbumByID)
+
+	router.GET("/hello", sayHello)
+
+	router.GET("/book", getBook)
+	router.POST("/book", postBook)
+	router.PUT("/book", putBook)
+	router.DELETE("/book", deleteBook)
+
+	fmt.Println("server started")
 	router.Run(":8090")
+
+}
+
+func deleteBook(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"method": "delete book"})
+
+}
+
+func putBook(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"method": "put book"})
+
+}
+
+func postBook(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"method": "post book"})
+
+}
+
+func getBook(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"method": "get book"})
+}
+
+func sayHello(c *gin.Context) {
+	//c.JSON(http.StatusOK, gin.H{"message": "hello world"})
+	t, err := template.ParseFiles("./hello.tmpl")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	t.Execute(c.Writer, "damon")
 }

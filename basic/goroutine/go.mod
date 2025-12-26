@@ -1,6 +1,6 @@
 module goroutine
 
-go 1.24.11
+go 1.24.0
 
 require (
 	github.com/panjf2000/ants/v2 v2.11.3 // indirect
