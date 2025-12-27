@@ -1,44 +1,45 @@
-# 使用官方的go基础镜像
-FROM golang:1.21-alpine as builder
+# 阶段1：编译阶段
+FROM golang:1.21-alpine AS builder
+
 
 # 设置工作目录
 WORKDIR /app
 
-# 开启Go模块（如果你的项目用go mod）
-# 国内代理加速依赖下载
-# 禁用CGO，编译出静态链接的二进制文件
-# 目标系统为Linux
-# 目标架构为amd64（根据服务器调整）
+# 启用 Go Modules，配置国内代理，禁用 CGO 生成静态二进制
 ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn,direct \
-    CGO_ENABLED=0\
-    GOOS=linux\
+    CGO_ENABLED=0 \
+    GOOS=linux \
     GOARCH=amd64
 
-# 复制go.mod和go.sum（先复制依赖文件，利用Docker缓存，避免每次改代码都重新下载依赖）
+# 复制依赖文件并下载
 COPY go.mod go.sum* ./
 RUN go mod download
 
-# 复制所有代码到容器
+# 复制所有代码
 COPY . .
 
-# 编译应用，输出为app二进制文件
-RUN go build -ldflags="-s -w" -o app main.go  # -ldflags="-s -w" 进一步减小二进制体积
+# 编译应用
+RUN go build -ldflags "-s -w" -o app main.go
 
-# 第二阶段：运行阶段（使用轻量的alpine镜像，仅保留编译后的二进制文件）
+# 阶段2：运行阶段
 FROM alpine
 
-# 可选：添加时区支持（如果应用需要）
-RUN apk --no-cache add tzdata
+# 设置时区
+RUN apk --no-cache add tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone \
+    && apk del tzdata
+
 ENV TZ=Asia/Shanghai
 
 # 设置工作目录
 WORKDIR /app
 
-# 从构建阶段复制编译好的二进制文件到当前镜像
+# 从构建阶段复制二进制文件
 COPY --from=builder /app/app .
 
-# 暴露应用监听的端口
+# 暴露端口
 EXPOSE 8090
 
 # 启动应用

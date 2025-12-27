@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"web-service-gin/pdf2image"
 
 	"github.com/gin-gonic/gin"
 )
@@ -69,9 +70,16 @@ func main() {
 	router.PUT("/book", putBook)
 	router.DELETE("/book", deleteBook)
 
+	router.GET("/pdf2image", pdf2imageProcess)
+
 	fmt.Println("server started")
 	router.Run(":8090")
 
+}
+
+func pdf2imageProcess(c *gin.Context) {
+	pdf2image.PDFToImage("./1.pdf", "./output", 300.0, 1.0)
+	c.JSON(http.StatusOK, gin.H{"method": "pdf2image"})
 }
 
 func deleteBook(c *gin.Context) {
