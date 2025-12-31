@@ -10,7 +10,14 @@ import (
 func InitUserRoutes() {
 	RegisterRoute(func(rgPublic *gin.RouterGroup, rgAuth *gin.RouterGroup) {
 		userApi := api.NewUserApi()
-		rgPublicUser := rgPublic.Group("user")
+		rgPublicUser := rgPublic.Group("user").Use(func() gin.HandlerFunc {
+			return func(c *gin.Context) {
+				//c.AbortWithStatusJSON(http.StatusOK, gin.H{
+				//	"msg": "login middleware",
+				//})
+
+			}
+		}())
 		{
 			rgPublicUser.POST("/login", userApi.Login)
 		}
