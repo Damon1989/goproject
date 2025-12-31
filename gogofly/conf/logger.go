@@ -1,7 +1,6 @@
 package conf
 
 import (
-	"fmt"
 	"os"
 	"time"
 
@@ -35,10 +34,6 @@ func getWriteSyncer() zapcore.WriteSyncer {
 	stRootDir, _ := os.Getwd()
 	stLogFilePath := stRootDir + stSeparator + "log" + stSeparator + time.Now().Format(time.DateOnly) + ".txt"
 
-	fmt.Println(stLogFilePath)
-	fmt.Println("--------------------")
-	fmt.Println(viper.GetInt("log.max_backups"))
-	fmt.Println("--------------------")
 	lumberJackSyncer := &lumberjack.Logger{
 		Filename:   stLogFilePath,
 		MaxSize:    viper.GetInt("log.max_size"), // megabytes

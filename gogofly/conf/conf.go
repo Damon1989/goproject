@@ -1,8 +1,6 @@
 package conf
 
 import (
-	"fmt"
-
 	"github.com/spf13/viper"
 )
 
@@ -14,5 +12,4 @@ func InitConfig() {
 	if err != nil {                 // Handle errors reading the config file
 		panic("Fatal error config file: " + err.Error())
 	}
-	fmt.Println(viper.GetString("server.port"))
 }
