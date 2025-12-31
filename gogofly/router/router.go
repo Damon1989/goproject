@@ -69,10 +69,11 @@ func InitRouter() {
 
 	// 在独立的 goroutine 中启动服务器，避免阻塞后续的信号监听
 	go func() {
-		for i := 0; i < 100000; i++ {
-			global.Logger.Info(fmt.Sprintf("Starting server on port %s", stPort))
-		}
-
+		// 增加启动日志 测试日志组件性能
+		//for i := 0; i < 100000; i++ {
+		//	global.Logger.Info(fmt.Sprintf("Starting server on port %s", stPort))
+		//}
+		global.Logger.Info(fmt.Sprintf("Starting server on port %s", stPort))
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			// TODO: 记录日志
 			global.Logger.Error(fmt.Sprintf("Failed to start server: %v", err))
