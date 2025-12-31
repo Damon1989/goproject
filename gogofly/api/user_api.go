@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/damon/gogofly/service/dto"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,15 +22,27 @@ func NewUserApi() UserApi {
 // @Success 200 {object} map[string]interface{}
 // @Router /api/v1/public/user/login [post]
 func (u UserApi) Login(ctx *gin.Context) {
+	var iUserLoginDTO dto.UserLoginDTO
+	if err := ctx.ShouldBind(&iUserLoginDTO); err != nil {
+		Fail(ctx, ResponseJson{
+			Msg: err.Error(),
+		})
+		return
+	}
+	OK(ctx, ResponseJson{
+		Data: iUserLoginDTO,
+	})
 	//ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
 	//	"msg": "login success",
 	//})
 
-	OK(ctx, ResponseJson{
-		Code:   200,
-		Msg:    "login success",
-		Status: 200,
-		Data:   nil,
-	})
+	//OK(ctx, ResponseJson{
+	//	Msg: "login success",
+	//})
+
+	//Fail(ctx, ResponseJson{
+	//	Code: 9001,
+	//	Msg:  "login fail",
+	//})
 
 }
