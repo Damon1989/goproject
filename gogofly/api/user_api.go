@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +21,15 @@ func NewUserApi() UserApi {
 // @Success 200 {object} map[string]interface{}
 // @Router /api/v1/public/user/login [post]
 func (u UserApi) Login(ctx *gin.Context) {
-	ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
-		"msg": "login success",
+	//ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
+	//	"msg": "login success",
+	//})
+
+	OK(ctx, ResponseJson{
+		Code:   200,
+		Msg:    "login success",
+		Status: 200,
+		Data:   nil,
 	})
+
 }

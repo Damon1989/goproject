@@ -7,6 +7,7 @@ import (
 	"github.com/damon/gogofly/global"
 	"github.com/damon/gogofly/router"
 	"github.com/damon/gogofly/utils"
+	"github.com/spf13/viper"
 )
 
 // Package cmd 提供应用程序的启动与清理入口逻辑。
@@ -25,6 +26,8 @@ func Start() {
 	var initErr error
 	// 初始化配置：读取配置文件（例如 settings.yml）并设置全局配置
 	conf.InitConfig()
+
+	fmt.Println(viper.GetDuration("jwt.tokenExpire"))
 
 	// 初始化日志：根据配置初始化日志器（日志级别、输出位置等）
 	// 并保存到全局变量，方便应用其余部分使用
