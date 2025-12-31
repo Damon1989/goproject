@@ -2,6 +2,10 @@ mode:
   develop: true
 server:
   port: 8090
+db:
+  dns: root:111111@tcp(127.0.0.1:3306)/gogofly?charset=utf8mb4&parseTime=True&loc=Local
+  MaxIdleConns: 10 # 数据库连接池最大空闲连接数
+  MaxOpenConns: 100 # 数据库连接池最大打开连接数
 log:
   max_size: 1 # 日志文件最大尺寸，单位MB，超过则切割
   max_backups: 10 # 保留旧日志文件数量
