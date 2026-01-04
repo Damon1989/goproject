@@ -14,6 +14,13 @@ jwt:
   tokenExpire: 30 # token有效期，单位分钟
   signingKey: gogodamonfly
 
+ansible:
+  user:
+    name: root
+    password: abc123
+  ShutdownHost:
+    Args: "poweroff"
+
 log:
   max_size: 1 # 日志文件最大尺寸，单位MB，超过则切割
   max_backups: 10 # 保留旧日志文件数量

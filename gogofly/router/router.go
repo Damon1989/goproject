@@ -33,6 +33,7 @@ func RegisterRoute(fn IFnRegisterRoute) {
 
 func initBasePlatformRoutes() {
 	InitUserRoutes()
+	InitHostRoutes()
 }
 
 func registerCustomValidator() {
