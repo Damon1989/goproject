@@ -16,7 +16,7 @@ import (
 // It embeds jwt.RegisteredClaims to include standard fields like
 // ExpiresAt and IssuedAt, and adds application-specific fields ID and Name.
 type JwtCustomClaims struct {
-	ID   int    `json:"id"`
+	ID   uint   `json:"id"`
 	Name string `json:"name"`
 	jwt.RegisteredClaims
 }
@@ -38,7 +38,7 @@ var stSigningKey = []byte(viper.GetString("jwt.signingKey"))
 //     original implementation), so ensure the config value represents a
 //     numeric duration in minutes. If you store a full duration string
 //     (like "15m") in viper, prefer using viper.GetDuration directly.
-func GenerateToken(id int, name string) (string, error) {
+func GenerateToken(id uint, name string) (string, error) {
 	fmt.Println(viper.GetDuration("jwt.tokenExpire"))
 	// Build custom claims with standard registered claims
 	claims := JwtCustomClaims{
