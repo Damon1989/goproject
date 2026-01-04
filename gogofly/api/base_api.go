@@ -1,0 +1,99 @@
+package api
+
+import (
+	"errors"
+	"fmt"
+	"reflect"
+
+	"github.com/damon/gogofly/global"
+	"github.com/damon/gogofly/utils"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"go.uber.org/zap"
+)
+
+type BaseApi struct {
+	Ctx    *gin.Context
+	Errors error
+	Logger *zap.SugaredLogger
+}
+
+func NewBaseApi() BaseApi {
+	return BaseApi{
+		Logger: global.Logger,
+	}
+}
+
+type BuildRequestOptions struct {
+	Ctx               *gin.Context
+	DTO               any
+	BindParamsFormUri bool
+}
+
+func (m *BaseApi) BuildRequest(option BuildRequestOptions) *BaseApi {
+	var errResult error
+	//绑定请求上下文
+	m.Ctx = option.Ctx
+
+	// 绑定请求数据
+	if option.DTO != nil {
+		if option.BindParamsFormUri {
+			errResult = m.Ctx.ShouldBindUri(option.DTO)
+		} else {
+			errResult = m.Ctx.ShouldBind(option.DTO)
+		}
+		if errResult != nil {
+			errResult = m.ParseValidateErrors(errResult, option.DTO)
+			m.AddError(errResult)
+			m.Fail(ResponseJson{
+				Msg: m.GetError().Error(),
+			})
+		}
+	}
+	return m
+}
+
+func (m *BaseApi) AddError(errNew error) {
+	m.Errors = utils.AppendError(m.Errors, errNew)
+}
+
+func (m *BaseApi) GetError() error {
+	return m.Errors
+}
+
+func (m *BaseApi) ParseValidateErrors(errs error, target interface{}) error {
+	var errResult error
+
+	errValidation, ok := errs.(validator.ValidationErrors)
+	if !ok {
+		return errs
+	}
+
+	// 通过反射获取指针指向元素的 类型对象
+	fields := reflect.TypeOf(target).Elem()
+	for _, fieldError := range errValidation {
+		field, _ := fields.FieldByName(fieldError.Field())
+		errMessageTag := fmt.Sprintf("%s_err", fieldError.Tag())
+		errMessage := field.Tag.Get(errMessageTag)
+		if errMessage == "" {
+			errMessage = field.Tag.Get("message")
+		}
+		if errMessage == "" {
+			errMessage = fmt.Sprintf("%s:%s Error", fieldError.Field(), fieldError.Tag())
+		}
+		errResult = utils.AppendError(errResult, errors.New(errMessage))
+
+	}
+	return errResult
+}
+
+func (m *BaseApi) Fail(resp ResponseJson) {
+	Fail(m.Ctx, resp)
+}
+
+func (m *BaseApi) OK(resp ResponseJson) {
+	OK(m.Ctx, resp)
+}
+func (m *BaseApi) ServerFail(resp ResponseJson) {
+	ServerFail(m.Ctx, resp)
+}

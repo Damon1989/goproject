@@ -11,6 +11,8 @@ import (
 	_ "github.com/damon/gogofly/docs"
 	"github.com/damon/gogofly/global"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -29,8 +31,24 @@ func RegisterRoute(fn IFnRegisterRoute) {
 	gfnRoutes = append(gfnRoutes, fn)
 }
 
-func InitBasePlatformRoutes() {
+func initBasePlatformRoutes() {
 	InitUserRoutes()
+}
+
+func registerCustomValidator() {
+	global.Logger.Info("register custom validator")
+	if validate, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		fmt.Println("register custom validator")
+		validate.RegisterValidation("first_is_a", func(fl validator.FieldLevel) bool {
+			fmt.Println("2")
+			if value, ok := fl.Field().Interface().(string); ok {
+				if value != "" && value[0] == 'a' {
+					return true
+				}
+			}
+			return false
+		})
+	}
 }
 
 func InitRouter() {
@@ -45,7 +63,10 @@ func InitRouter() {
 	rgAuth := r.Group("/api/v1")
 
 	// 初始化基础平台路由（例如用户路由）
-	InitBasePlatformRoutes()
+	initBasePlatformRoutes()
+
+	// 注册自定义验证器
+	registerCustomValidator()
 
 	// 调用所有已注册的路由注册函数，将路由组传入以完成具体路由的挂载
 	for _, fnRegisterRoute := range gfnRoutes {

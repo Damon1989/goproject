@@ -6,10 +6,13 @@ import (
 )
 
 type UserApi struct {
+	BaseApi
 }
 
 func NewUserApi() UserApi {
-	return UserApi{}
+	return UserApi{
+		BaseApi: NewBaseApi(),
+	}
 }
 
 // @Summary 用户登录
@@ -21,15 +24,14 @@ func NewUserApi() UserApi {
 // @Param password formData string true "密码"
 // @Success 200 {object} map[string]interface{}
 // @Router /api/v1/public/user/login [post]
-func (u UserApi) Login(ctx *gin.Context) {
+func (m UserApi) Login(c *gin.Context) {
 	var iUserLoginDTO dto.UserLoginDTO
-	if err := ctx.ShouldBind(&iUserLoginDTO); err != nil {
-		Fail(ctx, ResponseJson{
-			Msg: err.Error(),
-		})
+
+	if err := m.BuildRequest(BuildRequestOptions{Ctx: c, DTO: &iUserLoginDTO}).GetError(); err != nil {
 		return
 	}
-	OK(ctx, ResponseJson{
+
+	m.OK(ResponseJson{
 		Data: iUserLoginDTO,
 	})
 	//ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
