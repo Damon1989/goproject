@@ -39,8 +39,8 @@ func InitUserRoutes() {
 			//	})
 			//})
 			rgAuthUser.POST("", userApi.AddUser)
+			rgAuthUser.POST("/list", userApi.GetUserList)
 			rgAuthUser.GET("/:id", userApi.GetUserById)
-
 		}
 	})
 }

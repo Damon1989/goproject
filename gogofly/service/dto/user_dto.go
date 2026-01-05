@@ -28,3 +28,9 @@ func (m *UserAddDTO) ConvertToModel(iUser *model.User) {
 	iUser.Email = m.Email
 	iUser.Password = m.Password
 }
+
+// 用户列表相关的 DTO
+type UserListDTO struct {
+	Paginate
+	Name string `json:"name" form:"name"`
+}
