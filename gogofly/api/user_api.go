@@ -1,6 +1,9 @@
 package api
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/damon/gogofly/service"
 	"github.com/damon/gogofly/service/dto"
 	"github.com/damon/gogofly/utils"
@@ -92,6 +95,11 @@ func (m UserApi) AddUser(c *gin.Context) {
 	if err := m.BuildRequest(BuildRequestOptions{Ctx: c, DTO: &iUserAddDTO}).GetError(); err != nil {
 		return
 	}
+
+	file, _ := c.FormFile("file")
+	stFilePath := fmt.Sprintf("./upload/%s/%s", time.Now().Format("2006-01-02"), file.Filename)
+	_ = c.SaveUploadedFile(file, stFilePath)
+	iUserAddDTO.Avatar = stFilePath
 
 	if err := m.Service.AddUser(&iUserAddDTO); err != nil {
 		m.ServerFail(ResponseJson{
