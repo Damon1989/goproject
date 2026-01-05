@@ -11,6 +11,7 @@ const (
 	ERR_CODE_ADD_USER       = 10011
 	ERR_CODE_GET_USER_BY_ID = 10012
 	ERR_CODE_GET_USER_LIST  = 10013
+	ERR_CODE_UPDATE_USER    = 10014
 )
 
 type UserApi struct {
@@ -108,7 +109,7 @@ func (m UserApi) AddUser(c *gin.Context) {
 func (m UserApi) GetUserById(c *gin.Context) {
 	var iCommonIDDTO dto.CommonIDDTO
 
-	if err := m.BuildRequest(BuildRequestOptions{Ctx: c, DTO: &iCommonIDDTO, BindParamsFormUri: true}).GetError(); err != nil {
+	if err := m.BuildRequest(BuildRequestOptions{Ctx: c, DTO: &iCommonIDDTO, BindUri: true}).GetError(); err != nil {
 		return
 	}
 
@@ -144,4 +145,28 @@ func (m UserApi) GetUserList(c *gin.Context) {
 		Data:  iUserList,
 		Total: total,
 	})
+}
+
+func (m UserApi) UpdateUser(c *gin.Context) {
+	var iUserUpdateDTO dto.UserUpdateDTO
+	//strId := c.Param("id")
+	//fmt.Println("strId:", strId)
+	//id, _ := strconv.Atoi(strId)
+	//uid := uint(id)
+	//iUserUpdateDTO.ID = uid
+
+	if err := m.BuildRequest(BuildRequestOptions{Ctx: c, DTO: &iUserUpdateDTO, BindAll: true}).GetError(); err != nil {
+		return
+	}
+
+	err := m.Service.UpdateUser(&iUserUpdateDTO)
+	if err != nil {
+		m.ServerFail(ResponseJson{
+			Code: ERR_CODE_UPDATE_USER,
+			Msg:  err.Error(),
+		})
+		return
+	}
+	m.OK(ResponseJson{})
+
 }

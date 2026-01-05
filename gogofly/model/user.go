@@ -9,5 +9,5 @@ type User struct {
 	Avatar   string `json:"avatar" gorm:"type:varchar(100);not null"`
 	Mobile   string `json:"mobile" gorm:"type:varchar(100);not null"`
 	Email    string `json:"email" gorm:"type:varchar(100);not null"`
-	Password string `json:"password" gorm:"type:varchar(100);not null"`
+	Password string `json:"-" gorm:"type:varchar(100);not null"`
 }

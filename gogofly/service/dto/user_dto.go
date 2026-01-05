@@ -29,6 +29,23 @@ func (m *UserAddDTO) ConvertToModel(iUser *model.User) {
 	iUser.Password = m.Password
 }
 
+// 更新用户相关的 DTO
+type UserUpdateDTO struct {
+	ID       uint   `json:"id" form:"id" uri:"id" binding:"required" message:"ID不能为空"`
+	Name     string `json:"name" form:"name"`
+	RealName string `json:"real_name" form:"real_name"`
+	Mobile   string `json:"mobile" form:"mobile"`
+	Email    string `json:"email" form:"email"`
+}
+
+func (m *UserUpdateDTO) ConvertToModel(iUser *model.User) {
+	iUser.ID = m.ID
+	iUser.Name = m.Name
+	iUser.RealName = m.RealName
+	iUser.Mobile = m.Mobile
+	iUser.Email = m.Email
+}
+
 // 用户列表相关的 DTO
 type UserListDTO struct {
 	Paginate

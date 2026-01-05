@@ -47,3 +47,11 @@ func (m *UserService) GetUserById(iCommonIDDTO *dto.CommonIDDTO) (model.User, er
 func (m *UserService) GetUserList(iUserListDTO *dto.UserListDTO) ([]model.User, int64, error) {
 	return m.Dao.GetUserList(iUserListDTO)
 }
+
+func (m *UserService) UpdateUser(iUserUpdateDTO *dto.UserUpdateDTO) error {
+	if iUserUpdateDTO.ID == 0 {
+		return errors.New("id can not be empty")
+	}
+
+	return m.Dao.UpdateUser(iUserUpdateDTO)
+}

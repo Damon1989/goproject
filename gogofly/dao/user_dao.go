@@ -56,3 +56,12 @@ func (m *UserDao) GetUserList(iUserListDTO *dto.UserListDTO) ([]model.User, int6
 		Find(&giUserList).Offset(-1).Limit(-1).Count(&nTotal).Error
 	return giUserList, nTotal, err
 }
+
+func (m *UserDao) UpdateUser(iUserUpdateDTO *dto.UserUpdateDTO) error {
+	var iUser model.User
+
+	m.Orm.First(&iUser, iUserUpdateDTO.ID)
+	iUserUpdateDTO.ConvertToModel(&iUser)
+
+	return m.Orm.Save(&iUser).Error
+}
