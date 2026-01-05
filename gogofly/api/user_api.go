@@ -7,6 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	ERR_CODE_ADD_USER       = 10011
+	ERR_CODE_GET_USER_BY_ID = 10012
+)
+
 type UserApi struct {
 	BaseApi
 	Service *service.UserService
@@ -64,4 +69,57 @@ func (m UserApi) Login(c *gin.Context) {
 	//	Msg:  "login fail",
 	//})
 
+}
+
+// @Summary 添加用户
+// @Description 添加用户接口
+// @Tags 用户模块
+// @Accept json
+// @Produce json
+// @Param name formData string true "用户名"
+// @Param real_name formData string true "真实姓名"
+// @Param avatar formData string true "头像"
+// @Param mobile formData string true "手机号"
+// @Param email formData string true "邮箱"
+// @Param password formData string true "密码"
+// @Success 200 {object} map[string]interface{}
+func (m UserApi) AddUser(c *gin.Context) {
+	var iUserAddDTO dto.UserAddDTO
+
+	if err := m.BuildRequest(BuildRequestOptions{Ctx: c, DTO: &iUserAddDTO}).GetError(); err != nil {
+		return
+	}
+
+	if err := m.Service.AddUser(&iUserAddDTO); err != nil {
+		m.ServerFail(ResponseJson{
+			Code: ERR_CODE_ADD_USER,
+			Msg:  err.Error(),
+		})
+		return
+	}
+
+	m.OK(ResponseJson{
+		Msg:  "add user success",
+		Data: iUserAddDTO,
+	})
+}
+
+func (m UserApi) GetUserById(c *gin.Context) {
+	var iCommonIDDTO dto.CommonIDDTO
+
+	if err := m.BuildRequest(BuildRequestOptions{Ctx: c, DTO: &iCommonIDDTO, BindParamsFormUri: true}).GetError(); err != nil {
+		return
+	}
+
+	iUser, err := m.Service.GetUserById(&iCommonIDDTO)
+	if err != nil {
+		m.ServerFail(ResponseJson{
+			Code: ERR_CODE_GET_USER_BY_ID,
+			Msg:  err.Error(),
+		})
+		return
+	}
+	m.OK(ResponseJson{
+		Data: iUser,
+	})
 }

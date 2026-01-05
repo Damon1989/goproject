@@ -32,3 +32,14 @@ func (m *UserService) Login(dto dto.UserLoginDTO) (model.User, error) {
 	}
 	return iUser, errResult
 }
+
+func (m *UserService) AddUser(iUserAddDTO *dto.UserAddDTO) error {
+	if m.Dao.CheckUserNameExist(iUserAddDTO.Name) {
+		return errors.New("username already exists")
+	}
+	return m.Dao.AddUser(iUserAddDTO)
+}
+
+func (m *UserService) GetUserById(iCommonIDDTO *dto.CommonIDDTO) (model.User, error) {
+	return m.Dao.GetUserById(iCommonIDDTO.ID)
+}

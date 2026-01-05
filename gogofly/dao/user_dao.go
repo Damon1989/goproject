@@ -2,6 +2,7 @@ package dao
 
 import (
 	"github.com/damon/gogofly/model"
+	"github.com/damon/gogofly/service/dto"
 )
 
 var userDao *UserDao
@@ -23,4 +24,27 @@ func (m *UserDao) GetUserByNameAndPassword(name string, password string) (user m
 	var iUser model.User
 	m.Orm.Where("name = ? and password = ?", name, password).First(&iUser)
 	return iUser
+}
+
+func (m *UserDao) CheckUserNameExist(stUserName string) bool {
+	var nTotal int64
+	m.Orm.Model(&model.User{}).Where("name = ?", stUserName).Count(&nTotal)
+	return nTotal > 0
+}
+
+func (m *UserDao) AddUser(iUserAddDTO *dto.UserAddDTO) error {
+	var iUser model.User
+	iUserAddDTO.ConvertToModel(&iUser)
+	err := m.Orm.Save(&iUser).Error
+	if err == nil {
+		iUserAddDTO.ID = iUser.ID
+		iUserAddDTO.Password = ""
+	}
+	return err
+}
+
+func (m *UserDao) GetUserById(id uint) (model.User, error) {
+	var iUser model.User
+	err := m.Orm.First(&iUser, id).Error
+	return iUser, err
 }
