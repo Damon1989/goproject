@@ -65,3 +65,8 @@ func (m *UserDao) UpdateUser(iUserUpdateDTO *dto.UserUpdateDTO) error {
 
 	return m.Orm.Save(&iUser).Error
 }
+
+func (m *UserDao) DeleteUserById(id uint) error {
+	var iUser model.User
+	return m.Orm.Delete(&iUser, id).Error
+}

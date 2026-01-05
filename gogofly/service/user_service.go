@@ -55,3 +55,10 @@ func (m *UserService) UpdateUser(iUserUpdateDTO *dto.UserUpdateDTO) error {
 
 	return m.Dao.UpdateUser(iUserUpdateDTO)
 }
+
+func (m *UserService) DeleteUserById(iCommonIDDTO *dto.CommonIDDTO) error {
+	if iCommonIDDTO.ID == 0 {
+		return errors.New("id can not be empty")
+	}
+	return m.Dao.DeleteUserById(iCommonIDDTO.ID)
+}

@@ -42,6 +42,7 @@ func InitUserRoutes() {
 			rgAuthUser.POST("/list", userApi.GetUserList)
 			rgAuthUser.GET("/:id", userApi.GetUserById)
 			rgAuthUser.PUT("/:id", userApi.UpdateUser)
+			rgAuthUser.DELETE("/:id", userApi.DeleteUserById)
 		}
 	})
 }
