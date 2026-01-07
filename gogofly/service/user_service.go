@@ -3,11 +3,17 @@ package service
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/damon/gogofly/dao"
+	"github.com/damon/gogofly/global"
+	"github.com/damon/gogofly/global/constants"
 	"github.com/damon/gogofly/model"
 	"github.com/damon/gogofly/service/dto"
 	"github.com/damon/gogofly/utils"
+	"github.com/spf13/viper"
 )
 
 var userService *UserService
@@ -24,6 +30,10 @@ func NewUserService() *UserService {
 		}
 	}
 	return userService
+}
+
+func SetLoginUserTokenToRedis(uid uint, token string) error {
+	return global.RedisClient.Set(strings.Replace(constants.LOGIN_USER_TOKEN_REDIS_KEY, "{ID}", strconv.Itoa(int(uid)), -1), token, viper.GetDuration("jwt.tokenExpire")*time.Minute)
 }
 
 func (m *UserService) Login(dto dto.UserLoginDTO) (model.User, string, error) {
