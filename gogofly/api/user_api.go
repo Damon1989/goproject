@@ -1,12 +1,10 @@
 package api
 
 import (
-	"fmt"
-	"time"
+	"net/http"
 
 	"github.com/damon/gogofly/service"
 	"github.com/damon/gogofly/service/dto"
-	"github.com/damon/gogofly/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,6 +14,7 @@ const (
 	ERR_CODE_GET_USER_LIST  = 10013
 	ERR_CODE_UPDATE_USER    = 10014
 	ERR_CODE_DELETE_USER    = 10015
+	ERR_CODE_LOGIN          = 10016
 )
 
 type UserApi struct {
@@ -46,15 +45,15 @@ func (m UserApi) Login(c *gin.Context) {
 		return
 	}
 
-	iUser, err := m.Service.Login(iUserLoginDTO)
+	iUser, token, err := m.Service.Login(iUserLoginDTO)
 	if err != nil {
 		m.Fail(ResponseJson{
-			Msg: err.Error(),
+			Status: http.StatusUnauthorized,
+			Code:   ERR_CODE_LOGIN,
+			Msg:    err.Error(),
 		})
 		return
 	}
-
-	token, _ := utils.GenerateToken(iUser.ID, iUser.Name)
 
 	m.OK(ResponseJson{
 		Data: gin.H{
@@ -62,19 +61,6 @@ func (m UserApi) Login(c *gin.Context) {
 			"user":  iUser,
 		},
 	})
-	//ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
-	//	"msg": "login success",
-	//})
-
-	//OK(ctx, ResponseJson{
-	//	Msg: "login success",
-	//})
-
-	//Fail(ctx, ResponseJson{
-	//	Code: 9001,
-	//	Msg:  "login fail",
-	//})
-
 }
 
 // @Summary 添加用户
@@ -96,10 +82,10 @@ func (m UserApi) AddUser(c *gin.Context) {
 		return
 	}
 
-	file, _ := c.FormFile("file")
-	stFilePath := fmt.Sprintf("./upload/%s/%s", time.Now().Format("2006-01-02"), file.Filename)
-	_ = c.SaveUploadedFile(file, stFilePath)
-	iUserAddDTO.Avatar = stFilePath
+	/*	file, _ := c.FormFile("file")
+		stFilePath := fmt.Sprintf("./upload/%s/%s", time.Now().Format("2006-01-02"), file.Filename)
+		_ = c.SaveUploadedFile(file, stFilePath)
+		iUserAddDTO.Avatar = stFilePath*/
 
 	if err := m.Service.AddUser(&iUserAddDTO); err != nil {
 		m.ServerFail(ResponseJson{

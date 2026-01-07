@@ -2,10 +2,12 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/damon/gogofly/dao"
 	"github.com/damon/gogofly/model"
 	"github.com/damon/gogofly/service/dto"
+	"github.com/damon/gogofly/utils"
 )
 
 var userService *UserService
@@ -24,13 +26,19 @@ func NewUserService() *UserService {
 	return userService
 }
 
-func (m *UserService) Login(dto dto.UserLoginDTO) (model.User, error) {
+func (m *UserService) Login(dto dto.UserLoginDTO) (model.User, string, error) {
 	var errResult error
-	iUser := m.Dao.GetUserByNameAndPassword(dto.Name, dto.Password)
-	if iUser.ID == 0 {
+	var token string
+	iUser, err := m.Dao.GetUserByName(dto.Name)
+	if err != nil || !utils.CheckPassword(dto.Password, iUser.Password) {
 		errResult = errors.New("用户名或密码错误")
+	} else { // 登录成功 生成 token
+		token, err = utils.GenerateToken(iUser.ID, iUser.Name)
+		if err != nil {
+			errResult = errors.New(fmt.Sprintf("generate token error: %v", err))
+		}
 	}
-	return iUser, errResult
+	return iUser, token, errResult
 }
 
 func (m *UserService) AddUser(iUserAddDTO *dto.UserAddDTO) error {

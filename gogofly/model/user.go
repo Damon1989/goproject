@@ -1,6 +1,9 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"github.com/damon/gogofly/utils"
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
@@ -10,4 +13,16 @@ type User struct {
 	Mobile   string `json:"mobile" gorm:"type:varchar(100);not null"`
 	Email    string `json:"email" gorm:"type:varchar(100);not null"`
 	Password string `json:"-" gorm:"type:varchar(100);not null"`
+}
+
+func (u *User) Encrypt() error {
+	stHash, err := utils.Encrypt(u.Password)
+	if err == nil {
+		u.Password = stHash
+	}
+	return err
+}
+
+func (u *User) BeforeCreate(orm *gorm.DB) error {
+	return u.Encrypt()
 }
