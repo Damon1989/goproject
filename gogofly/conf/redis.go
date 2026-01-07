@@ -30,6 +30,10 @@ func (rc *RedisClient) Del(key ...string) error {
 	return rdClient.Del(context.Background(), key...).Err()
 }
 
+func (rc *RedisClient) GetExpireDuration(key string) (time.Duration, error) {
+	return rdClient.TTL(context.Background(), key).Result()
+}
+
 func InitRedis() (*RedisClient, error) {
 	rdClient = redis.NewClient(&redis.Options{
 		Addr:     viper.GetString("redis.addr"),

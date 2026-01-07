@@ -10,6 +10,7 @@ import (
 
 	_ "github.com/damon/gogofly/docs"
 	"github.com/damon/gogofly/global"
+	"github.com/damon/gogofly/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -62,6 +63,7 @@ func InitRouter() {
 	r := gin.Default()
 	rgPublic := r.Group("/api/v1/public")
 	rgAuth := r.Group("/api/v1")
+	rgAuth.Use(middleware.Auth())
 
 	// 初始化基础平台路由（例如用户路由）
 	initBasePlatformRoutes()

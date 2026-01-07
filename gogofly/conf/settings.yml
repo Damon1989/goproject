@@ -11,7 +11,7 @@ redis:
   url: 127.0.0.1:6379
 
 jwt:
-  tokenExpire: 1 # token有效期，单位分钟
+  tokenExpire: 3 # token有效期，单位分钟
   signingKey: gogodamonfly
 
 ansible:
