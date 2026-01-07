@@ -1,0 +1,34 @@
+info:
+  contact: {}
+  description: Go-Web开发记录 实战
+  title: Go-Web开发记录
+  version: "1.0"
+paths:
+  /api/v1/public/user/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登录接口
+      parameters:
+      - description: 用户名
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 用户登录
+      tags:
+      - 用户模块
+swagger: "2.0"
